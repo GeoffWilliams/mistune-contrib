@@ -36,6 +36,22 @@ def block_code(text, lang, inlinestyles=False, linenos=False):
 
 
 class HighlightMixin(object):
+    """Highlight mixin for Renderer, mix this with Renderer::
+
+        class HighlightRenderer(HighlightMixin, Renderer):
+            pass
+
+        highlight = HighlightRenderer()
+        highlight.options = {
+          "linenos": "inline",
+          "full": True,
+          #"inlinestyles": True,
+        }
+
+        md = mistune.Markdown(renderer=highlight)
+        html = md(md_txt)
+    """
+
     def block_code(self, text, lang):
         # renderer has an options
         inlinestyles = self.options.get('inlinestyles', False)
