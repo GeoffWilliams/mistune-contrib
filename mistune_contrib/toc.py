@@ -47,6 +47,10 @@ class TocMixin(object):
     def _iter_toc(self, level):
         first_level = 0
         last_level = 0
+        # because we have everything in nested li's we need to put each _line_ in
+        # its own div so that we can set the div border as a dotted line in css
+        # since there is no leader() available
+        link_template = """%s<div class="tocline"><a href="#toc-%d">%s</a> <a href="#toc-%d" class="tocpagenr">&nbsp;</a></div>"""
 
         yield '<ul id="table-of-content">\n'
 
@@ -61,19 +65,19 @@ class TocMixin(object):
                 # based on first level
                 first_level = l
                 last_level = l
-                yield '<li><a href="#toc-%d">%s</a>' % (index, text)
+                yield link_template % ('<li>', index, text, index)
             elif last_level == l:
-                yield '</li>\n<li><a href="#toc-%d">%s</a>' % (index, text)
+                yield link_template % ('</li>\n<li>', index, text, index)
             elif last_level == l - 1:
                 last_level = l
-                yield '<ul>\n<li><a href="#toc-%d">%s</a>' % (index, text)
+                yield link_template % ('<ul>\n<li>', index, text, index)
             elif last_level > l:
                 # close indention
                 yield '</li>'
                 while last_level > l:
                     yield '</ul>\n</li>\n'
                     last_level -= 1
-                yield '<li><a href="#toc-%d">%s</a>' % (index, text)
+                yield link_template % ('<li>', index, text, index)
 
         # close tags
         yield '</li>\n'
